@@ -21,11 +21,12 @@ private:
     sf::Color color;
     bool keyPressed;
 public:
+   
     Snake(sf::Color color, int startX, int startY);
     bool isKeyPressed() const;
 
     void setKeyPressed(bool pressed);
-    bool move();
+    bool move(bool);
     void grow();
     void render(sf::RenderWindow& window);
     bool checkCollision(const Snake& other) const;
@@ -70,6 +71,7 @@ private:
     Texture Tex_bg;
 
 public:
+    bool cheat1flag, cheat2flag;
     Game();
 
     void run(int);
@@ -118,10 +120,21 @@ Snake::Snake(sf::Color color, int startX, int startY)
 
 //    body.front().setPosition(newPosition);
 //}
-bool Snake::move()
+bool Snake::move(bool flag )
 {
+    sf::Vector2f newPosition; 
     sf::Vector2f headPosition = body.front().getPosition();
-    sf::Vector2f newPosition = headPosition + direction * 5.0f;
+
+    if (flag)
+    {
+             newPosition = headPosition + direction * 15.0f;
+
+    }
+    else
+    {
+
+         newPosition = headPosition + direction * 5.0f;
+    }
 
     if (newPosition.x < 0 || newPosition.x >= 800 || newPosition.y < 0 || newPosition.y >= 600) {
         // Game over, hit the wall
@@ -210,10 +223,11 @@ const sf::Vector2f& Food::getPosition() const {
     return position;
 }
 
-Game::Game() : window(sf::VideoMode(800, 600), "SFML Snake Game"), turnCounter(0), respawnCounter(0) {
+Game::Game() : window(sf::VideoMode(800, 600), "SFML Snake Game"), turnCounter(0), respawnCounter(0), cheat1flag(0), cheat2flag(0) {
     window.setFramerateLimit(60);
    if(!Tex_bg.loadFromFile("bg.png"))cout<<"Bg not loaded;";
     bg.setTexture(Tex_bg);
+    
     srand(static_cast<unsigned>(time(nullptr)));
 
     for (int i = 0; i < 6; ++i)
@@ -240,7 +254,16 @@ void Game::handleInput() {
         if (players[0].getDirection() != Vector2f(0, 1))
         {
             players[0].setDirection(0, -1);
-            players[0].move();
+            if (cheat1flag)
+            {
+                players[0].move(1);
+
+            }
+            else
+            {
+                players[0].move(0);
+
+            }
         }
 
 
@@ -250,7 +273,16 @@ void Game::handleInput() {
         if (players[0].getDirection() != Vector2f(0, -1))
         {
             players[0].setDirection(0, 1);
-            players[0].move();
+            if (cheat1flag)
+            {
+                players[0].move(1);
+
+            }
+            else
+            {
+                players[0].move(0);
+
+            }
         }
 
     }
@@ -260,7 +292,16 @@ void Game::handleInput() {
         {
 
             players[0].setDirection(-1, 0);
-            players[0].move();
+            if (cheat1flag)
+            {
+                players[0].move(1);
+
+            }
+            else
+            {
+                players[0].move(0);
+
+            }
 
         }
 
@@ -271,9 +312,24 @@ void Game::handleInput() {
         {
 
             players[0].setDirection(1, 0);
-            players[0].move();
+            if (cheat1flag)
+            {
+                players[0].move(1);
+
+            }
+            else
+            {
+                players[0].move(0);
+
+            }
 
         }
+    }
+    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::C))
+    {
+        cheat1flag = !cheat1flag;
+        if (cheat1flag)cout << "Cheats up ";
+        else cout << "normal speed";
     }
 
     // Player 2 controls
@@ -284,7 +340,16 @@ void Game::handleInput() {
             if (players[1].getDirection() != Vector2f(0, 1))
             {
                 players[1].setDirection(0, -1);
-                players[1].move();
+                if (cheat1flag)
+                {
+                    players[0].move(1);
+
+                }
+                else
+                {
+                    players[0].move(0);
+
+                }
             }
 
         }
@@ -293,7 +358,14 @@ void Game::handleInput() {
             if (players[1].getDirection() != Vector2f(0, -1))
             {
                 players[1].setDirection(0, 1);
-                players[1].move();
+                if (cheat1flag)
+                {
+                    players[0].move(1);
+                }
+                else
+                {
+                    players[0].move(0);
+                }
             }
 
         }
@@ -303,7 +375,14 @@ void Game::handleInput() {
             {
 
                 players[1].setDirection(-1, 0);
-                players[1].move();
+                if (cheat1flag)
+                {
+                    players[0].move(1);
+                }
+                else
+                {
+                    players[0].move(0);
+                }
 
             }
 
@@ -314,10 +393,22 @@ void Game::handleInput() {
             {
 
                 players[1].setDirection(1, 0);
-                players[1].move();
+                if (cheat2flag)
+                {
+                    players[0].move(1);
+
+                }
+                else
+                {
+                    players[0].move(0);
+                }
 
             }
 
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::V))
+        {
+            cheat2flag = !cheat2flag;
         }
     }
 }
@@ -326,7 +417,7 @@ void Game::update() {
     
     for (int i = 0; i < players.size(); i++)
     {
-        if (players[i].move())
+        if (players[i].move(0))
         {
             cout << "TESTING GAME OVER" << endl;
             //Game OVER
