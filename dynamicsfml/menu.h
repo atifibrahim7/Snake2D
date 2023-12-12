@@ -3,6 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <iostream>
+#include "game.h"
 using namespace std;
 using namespace sf;
 
@@ -25,6 +26,17 @@ public:
         // Create a window to display the menu
         RenderWindow window(VideoMode(800, 600), " Menu");
 
+        // Create a snake object for aethetics
+        Snake snake(sf::Color::Green, 10,10);
+        for(int i=0;i<20;i++)
+            snake.grow();
+
+        // Create a rectangle object for the overview
+        Vector2i posFloat;
+        RectangleShape rectangle(Vector2f(-100, -100));
+        Color green(0, 255, 0, 128);
+        rectangle.setFillColor(green);
+
         // Create a text object for the overview
         while (window.isOpen())
         {
@@ -35,6 +47,26 @@ public:
                 if (event.type == Event::Closed)
                     window.close();
 
+                
+                posFloat = Mouse::getPosition(window);
+                if (posFloat.x >= 257 && posFloat.x <= 520 && posFloat.y >= 237 && posFloat.y <= 315)
+                {
+					rectangle.setPosition(257, 237);
+					rectangle.setSize(Vector2f(263, 78));
+				}
+				else if (posFloat.x >= 288 && posFloat.x <= 484 && posFloat.y >= 350 && posFloat.y <= 435)
+				{
+					rectangle.setPosition(288, 350);
+					rectangle.setSize(Vector2f(196, 85));
+				}
+				else if (posFloat.x >= 344 && posFloat.x <= 430 && posFloat.y >= 470 && posFloat.y <= 530)
+				{
+					rectangle.setPosition(344, 470);
+					rectangle.setSize(Vector2f(86, 60));
+				}
+                else
+                    rectangle.setPosition(-100, -100);
+                
                 if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
                 {
                     Vector2i mousePos = Mouse::getPosition(window);
@@ -43,7 +75,7 @@ public:
                     {
                         cout << "single player";
                         choice = 1;
-                        //~Game();
+                        //~Game()
                         window.close();
                     }
                     if (mousePos.x >= 288 && mousePos.x <= 484 && mousePos.y >= 350 && mousePos.y <= 435)
@@ -63,11 +95,57 @@ public:
                     }
                 }
             }
+            //SNAKE ANIMATION
+            vector<RectangleShape> body = snake.getBody();
+            if (body[0].getPosition() == Vector2f(10,500))
+            {
+                if (snake.getDirection() != Vector2f(0, 1))
+                {
+                    snake.setDirection(0, -1);
+                    snake.move();
+                }
 
+
+            }
+            else if (body[0].getPosition() == Vector2f(750, 10))
+            {
+                if (snake.getDirection() != Vector2f(0, -1))
+                {
+                    snake.setDirection(0, 1);
+                    snake.move();
+                }
+
+            }
+            else if (body[0].getPosition() == Vector2f(750, 500))
+            {
+                if (snake.getDirection() != Vector2f(1, 0))
+                {
+
+                    snake.setDirection(-1, 0);
+                    snake.move();
+
+                }
+
+            }
+            else if (body[0].getPosition() == Vector2f(10, 10))
+            {
+                if (snake.getDirection() != Vector2f(-1, 0))
+                {
+
+                    snake.setDirection(1, 0);
+                    snake.move();
+
+                }
+            }
+            snake.move();
             // Draw the menu sprite
             window.clear();
             window.draw(menu);
+            window.draw(rectangle);
+            snake.render(window);
             window.display();
+
+            sf::sleep(sf::seconds(0.1));
         }
     }
 
