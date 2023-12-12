@@ -27,7 +27,7 @@ public:
     bool isKeyPressed() const;
 
     void setKeyPressed(bool pressed);
-    bool move(bool);
+    bool move(bool = 0);
     void grow();
     void render(sf::RenderWindow& window);
     bool checkCollision(const Snake& other) const;
