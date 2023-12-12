@@ -4,7 +4,7 @@ int main() {
     Menu m;
     m.display_menu();
     Game game;
-    game.run();
+    game.run(1);
 
     return 0;
 }
