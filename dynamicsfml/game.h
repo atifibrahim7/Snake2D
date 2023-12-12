@@ -344,12 +344,12 @@ void Game::handleInput() {
                 players[1].setDirection(0, -1);
                 if (cheat1flag)
                 {
-                    players[0].move(1);
+                    players[1].move(1);
 
                 }
                 else
                 {
-                    players[0].move(0);
+                    players[1].move(0);
 
                 }
             }
@@ -362,11 +362,11 @@ void Game::handleInput() {
                 players[1].setDirection(0, 1);
                 if (cheat1flag)
                 {
-                    players[0].move(1);
+                    players[1].move(1);
                 }
                 else
                 {
-                    players[0].move(0);
+                    players[1].move(0);
                 }
             }
 
@@ -379,11 +379,11 @@ void Game::handleInput() {
                 players[1].setDirection(-1, 0);
                 if (cheat1flag)
                 {
-                    players[0].move(1);
+                    players[1].move(1);
                 }
                 else
                 {
-                    players[0].move(0);
+                    players[1].move(0);
                 }
 
             }
@@ -397,12 +397,12 @@ void Game::handleInput() {
                 players[1].setDirection(1, 0);
                 if (cheat2flag)
                 {
-                    players[0].move(1);
+                    players[1].move(1);
 
                 }
                 else
                 {
-                    players[0].move(0);
+                    players[1].move(0);
                 }
 
             }
