@@ -25,7 +25,7 @@ public:
     bool isKeyPressed() const;
 
     void setKeyPressed(bool pressed);
-    void move();
+    bool move();
     void grow();
     void render(sf::RenderWindow& window);
     bool checkCollision(const Snake& other) const;
@@ -62,8 +62,7 @@ private:
     void reset();
 
     sf::RenderWindow window;
-    Snake player1;
-    Snake player2;
+    vector<Snake> players;
     std::vector<Food> foods;
     int turnCounter;
     int respawnCounter;
@@ -73,7 +72,7 @@ private:
 public:
     Game();
 
-    void run();
+    void run(int);
 
 };
 bool Snake::isKeyPressed() const {
@@ -119,7 +118,7 @@ Snake::Snake(sf::Color color, int startX, int startY)
 
 //    body.front().setPosition(newPosition);
 //}
-void Snake::move()
+bool Snake::move()
 {
     sf::Vector2f headPosition = body.front().getPosition();
     sf::Vector2f newPosition = headPosition + direction * 5.0f;
@@ -127,7 +126,7 @@ void Snake::move()
     if (newPosition.x < 0 || newPosition.x >= 800 || newPosition.y < 0 || newPosition.y >= 600) {
         // Game over, hit the wall
         length = 0;
-        return;
+        return 1;
     }
 
     // Check for collision with itself
@@ -136,7 +135,7 @@ void Snake::move()
         if (body[i].getPosition() == newPosition) {
             // Game over, hit itself
             length = 0;
-            return;
+            return 1;
         }
     }
     
@@ -144,6 +143,7 @@ void Snake::move()
         body[i].setPosition(body[i - 1].getPosition());
     }
     body.front().setPosition(newPosition);
+    return 0;
 }
 //correct
 void Snake::grow()
@@ -210,8 +210,7 @@ const sf::Vector2f& Food::getPosition() const {
     return position;
 }
 
-Game::Game() : window(sf::VideoMode(800, 600), "SFML Snake Game"), player1(sf::Color::Green, 100, 100),
-player2(sf::Color::Red, 700, 200), turnCounter(0), respawnCounter(0) {
+Game::Game() : window(sf::VideoMode(800, 600), "SFML Snake Game"), turnCounter(0), respawnCounter(0) {
     window.setFramerateLimit(60);
    if(!Tex_bg.loadFromFile("bg.png"))cout<<"Bg not loaded;";
     bg.setTexture(Tex_bg);
@@ -233,95 +232,108 @@ void Game::handleInput() {
         }
     }
 
+    int size = players.size();
+
     // Player 1 controls
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {   
-        if (player1.getDirection() != Vector2f(0, 1))
+        if (players[0].getDirection() != Vector2f(0, 1))
         {
-            player1.setDirection(0, -1);
-            player1.move();
+            players[0].setDirection(0, -1);
+            players[0].move();
         }
 
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        if (player1.getDirection() != Vector2f(0, -1))
+        if (players[0].getDirection() != Vector2f(0, -1))
         {
-            player1.setDirection(0, 1);
-            player1.move();
+            players[0].setDirection(0, 1);
+            players[0].move();
         }
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        if (player1.getDirection() != Vector2f(1, 0))
+        if (players[0].getDirection() != Vector2f(1, 0))
         {
 
-            player1.setDirection(-1, 0);
-            player1.move();
+            players[0].setDirection(-1, 0);
+            players[0].move();
 
         }
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        if (player1.getDirection() != Vector2f(-1, 0))
+        if (players[0].getDirection() != Vector2f(-1, 0))
         {
 
-            player1.setDirection(1, 0);
-            player1.move();
+            players[0].setDirection(1, 0);
+            players[0].move();
 
         }
     }
 
     // Player 2 controls
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if (size == 2)
     {
-        if (player2.getDirection() != Vector2f(0, 1))
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
         {
-            player2.setDirection(0, -1);
-            player2.move();
-        }
-
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-    {
-        if (player2.getDirection() != Vector2f(0, -1))
-        {
-            player2.setDirection(0, 1);
-            player2.move();
-        }
-
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-    {
-        if (player2.getDirection() != Vector2f(1, 0))
-        {
-
-            player2.setDirection(-1, 0);
-            player2.move();
+            if (players[1].getDirection() != Vector2f(0, 1))
+            {
+                players[1].setDirection(0, -1);
+                players[1].move();
+            }
 
         }
-
-    }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-    {
-        if (player2.getDirection() != Vector2f(-1, 0))
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
         {
-
-            player2.setDirection(1, 0);
-            player2.move();
+            if (players[1].getDirection() != Vector2f(0, -1))
+            {
+                players[1].setDirection(0, 1);
+                players[1].move();
+            }
 
         }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        {
+            if (players[1].getDirection() != Vector2f(1, 0))
+            {
 
+                players[1].setDirection(-1, 0);
+                players[1].move();
+
+            }
+
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        {
+            if (players[1].getDirection() != Vector2f(-1, 0))
+            {
+
+                players[1].setDirection(1, 0);
+                players[1].move();
+
+            }
+
+        }
     }
 }
 
 void Game::update() {
-    player1.move();
-    player2.move();
+    
+    for (int i = 0; i < players.size(); i++)
+    {
+        if (players[i].move())
+        {
+            cout << "TESTING GAME OVER" << endl;
+            //Game OVER
+			//reset()
+		}
 
+    }
     // Check for collisions
     //if (player1.checkCollision(player2) || player1.getLength() == 0 || player2.getLength() == 0) {
     //    //  std::cout << "Game Over! Player 1 score: " << player1.getLength() - 1 << ", Player 2 score: "
@@ -332,14 +344,13 @@ void Game::update() {
 
     // Check for collision with food and handle respawn
     for (auto& food : foods) {
-        if (player1.checkCollisionWithFood(food.getPosition())) {
-            player1.grow();
-            food.spawn(800, 600);
-        }
-
-        if (player2.checkCollisionWithFood(food.getPosition())) {
-            player2.grow();
-            food.spawn(800, 600);
+        for (int i = 0; i < players.size(); i++)
+        {
+            if (players[i].checkCollisionWithFood(food.getPosition()))
+            {
+                players[i].grow();
+                food.spawn(800, 600);
+            }
         }
     }
 
@@ -361,8 +372,8 @@ void Game::render() {
     window.clear();
     window.draw(bg);
     // Render snakes
-    player1.render(window);
-    player2.render(window);
+    for(int i=0;i<players.size();i++)
+        players[i].render(window);
 
     // Render food
     for (const auto& food : foods) {
@@ -372,8 +383,15 @@ void Game::render() {
     window.display();
 }
 void Game::reset() {
-    player1 = Snake(sf::Color::Green, 100, 100);
-    player2 = Snake(sf::Color::Red, 700, 500);
+    int size = players.size();
+    players.clear();
+    Snake player1(sf::Color::Green, 100, 100);
+    players.push_back(player1);
+    if (size == 2)
+    {
+        Snake player2(sf::Color::Green, 700, 500);
+        players.push_back(player2);
+    }
 
     for (auto& food : foods) {
         food.spawn(800, 600);
@@ -383,8 +401,17 @@ void Game::reset() {
     respawnCounter = 0;
 }
 
-void Game::run() {
+void Game::run(int play) {
     sf::Clock clock;
+
+    Snake player1(sf::Color::Green, 100, 100);
+    players.push_back(player1);
+    if (play == 2)
+    {
+        Snake player2(sf::Color::Red, 700, 500);
+        players.push_back(player2);
+    }
+
 
     while (window.isOpen()) {
         sf::Time elapsed = clock.restart();
