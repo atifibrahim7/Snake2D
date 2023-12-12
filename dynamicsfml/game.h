@@ -421,7 +421,13 @@ int Game::update() {
     {
         if (players[i].move(0))
         {
-            cout << "TESTING GAME OVER" << endl;
+            //cout << "TESTING GAME OVER" << endl;
+            int i = 1;
+            for (const auto& element : players) {
+                cout << "Player " << i << " Score : ";
+                std::cout << element.getLength()  << " ";
+                i++;
+            }
             return 0;       // 0 for end screen
             //Game OVER
 			//reset()
@@ -433,7 +439,13 @@ int Game::update() {
     {
         if (players[0].checkCollision(players[1]) || players[1].checkCollision(players[0]))
         {
-            cout << "TESTING GAME OVER" << endl;
+            //cout << "TESTING GAME OVER" << endl;
+            int i = 1;
+            for (const auto& element : players) {
+                cout << "Player " << i << " Score : ";
+                std::cout << element.getLength() - 1 << " ";
+                i++;
+            }
             return 0;       // 0 for end screen
         }
     }
