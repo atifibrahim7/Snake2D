@@ -20,7 +20,7 @@ public:
 
           // Constructor's body
     }
-    void display_menu()
+    void display_menu(int& choice)
     {
         // Create a window to display the menu
         RenderWindow window(VideoMode(800, 600), " Menu");
@@ -42,18 +42,21 @@ public:
                     if (mousePos.x >= 257 && mousePos.x <= 520 && mousePos.y >= 237 && mousePos.y <= 315)
                     {
                         cout << "single player";
+                        choice = 1;
                         //~Game();
-                       // window.close();
+                        window.close();
                     }
                     if (mousePos.x >= 288 && mousePos.x <= 484 && mousePos.y >= 350 && mousePos.y <= 435)
                     {
                         cout << "Two  player";
-                        //  window.close();
+                        choice = 2;
+                          window.close();
                     }
                 
                     if (mousePos.x >= 344 && mousePos.x <= 430 && mousePos.y >= 470 && mousePos.y <= 530)
                     {
                         cout << "Exit";
+                        choice = 0;
                           window.close();
 
 
