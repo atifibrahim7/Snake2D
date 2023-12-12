@@ -10,14 +10,17 @@ using namespace sf;
 class Menu {
 public:
 
-    Sprite menu;
-    Texture menu_texture;
+    Sprite menu,end;
+    Texture menu_texture,end_tex;
+    
 
     // Add menu attributes here
     Menu()
     {
         menu_texture.loadFromFile("menu.png");
         menu.setTexture(menu_texture);
+        end_tex.loadFromFile("end.png");
+        end.setTexture(end_tex);
 
           // Constructor's body
     }
@@ -149,5 +152,48 @@ public:
         }
     }
 
+    int display_end()
+    {
+        RenderWindow window(VideoMode(800, 600), " Menu");
+        while (window.isOpen())
+        {
+            // Handle events
+            Event event;
+            while (window.pollEvent(event))
+            {
+                if (event.type == Event::Closed)
+                    window.close();
 
+
+
+                if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+                {
+                    Vector2i mousePos = Mouse::getPosition(window);
+                    cout << mousePos.x << " " << mousePos.y << endl;
+                  
+                    if (mousePos.x >= 288 && mousePos.x <= 484 && mousePos.y >= 350 && mousePos.y <= 435)
+                    {
+                        cout << "Two  player";
+                        return 1;       // play again
+                    }
+
+                    if (mousePos.x >= 344 && mousePos.x <= 430 && mousePos.y >= 470 && mousePos.y <= 530)
+                    {   
+                        return 0;       //end
+                        cout << "Exit";
+                        window.close();
+
+
+                    }
+                }
+            }
+          
+            window.clear();
+            window.draw(end);
+            window.display();
+
+            sf::sleep(sf::seconds(0.1));
+        }
+
+    }
 };
