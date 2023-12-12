@@ -58,7 +58,7 @@ public:
 class Game {
 private:
     void handleInput();
-    void update();
+    int update();
     void render();
     void reset();
 
@@ -74,7 +74,7 @@ public:
     bool cheat1flag, cheat2flag;
     Game();
 
-    void run(int);
+    int run(int);
 
 };
 bool Snake::isKeyPressed() const {
@@ -413,13 +413,14 @@ void Game::handleInput() {
     }
 }
 
-void Game::update() {
+int Game::update() {
     
     for (int i = 0; i < players.size(); i++)
     {
         if (players[i].move(0))
         {
             cout << "TESTING GAME OVER" << endl;
+            return 0;       // 0 for end screen
             //Game OVER
 			//reset()
 		}
@@ -457,6 +458,7 @@ void Game::update() {
     }
 
     turnCounter++;
+    return 1; // 1 for normal working
 }
 
 void Game::render() {
@@ -492,7 +494,7 @@ void Game::reset() {
     respawnCounter = 0;
 }
 
-void Game::run(int play) {
+int Game::run(int play) {
     sf::Clock clock;
 
     Snake player1(sf::Color::Green, 100, 100);
@@ -509,7 +511,12 @@ void Game::run(int play) {
         float dt = elapsed.asSeconds();
 
         handleInput();
-        update();
+        if (update());
+        else {
+            cout << "call for end";
+            return 0;   // zero for end screen ;
+        }
+       
         render();
         
 
