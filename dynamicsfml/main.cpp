@@ -16,6 +16,7 @@ int main() {
     else {
         ;
     }
+    cout << "exited";
     return 0;
 }
 
