@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <ctime>
 using namespace std;
-
+using namespace sf;
 struct My_coord
 {
     int x;
@@ -14,41 +14,35 @@ struct My_coord
 };
 
 class Snake {
-public:
-    Snake(sf::Color color, int startX, int startY);
-
-    void move();
-    void grow();
-    void render(sf::RenderWindow& window);
-    bool checkCollision(const Snake& other) const;
-    bool checkCollisionWithFood(const sf::Vector2f& foodPosition) const;
-
-    const std::vector<sf::RectangleShape>& getBody() const;
-    int getLength() const;
-
 private:
     std::vector<sf::RectangleShape> body;
     int length;
     sf::Vector2f direction;
     sf::Color color;
+    bool keyPressed;
+public:
+    Snake(sf::Color color, int startX, int startY);
+    bool isKeyPressed() const;
+
+    void setKeyPressed(bool pressed);
+    void move();
+    void grow();
+    void render(sf::RenderWindow& window);
+    bool checkCollision(const Snake& other) const;
+    bool checkCollisionWithFood(const sf::Vector2f& foodPosition) const;
+    void setDirection(int, int);
+    const std::vector<sf::RectangleShape>& getBody() const;
+    int getLength() const;
+
 };
 
-//class Food {
-//public:
-  //  Food(sf::Color color);
 
-   // void spawn(int maxX, int maxY);
-   // void render(sf::RenderWindow& window);
-
-   // const sf::Vector2f& getPosition() const;
-
-//private:
-  //  sf::RectangleShape shape;
-  //  sf::Color color;
-  //  sf::Vector2f position;
-//};
 
 class Food {
+private:
+    sf::RectangleShape shape;
+    sf::Color color;
+    sf::Vector2f position;
 public:
     Food(sf::Color color);
 
@@ -57,18 +51,9 @@ public:
 
     const sf::Vector2f& getPosition() const;
 
-private:
-    sf::RectangleShape shape;
-    sf::Color color;
-    sf::Vector2f position;
 };
 
 class Game {
-public:
-    Game();
-
-    void run();
-
 private:
     void handleInput();
     void update();
@@ -81,10 +66,32 @@ private:
     std::vector<Food> foods;
     int turnCounter;
     int respawnCounter;
+    Sprite bg; 
+    Texture Tex_bg;
+
+public:
+    Game();
+
+    void run();
+
 };
+bool Snake::isKeyPressed() const {
+    return keyPressed;
+}
+
+// Function to set the key pressed state
+void Snake::setKeyPressed(bool pressed) {
+    keyPressed = pressed;
+}
+
+void  Snake::setDirection(int x, int y)
+{
+    direction.x = x;
+    direction.y = y;
+}
 
 Snake::Snake(sf::Color color, int startX, int startY)
-    : color(color), length(1), direction(1, 0) {
+    : color(color), length(1), direction(0, 1) {
     sf::RectangleShape segment(sf::Vector2f(20, 20));
     segment.setPosition(startX, startY);
     segment.setFillColor(color);
@@ -110,7 +117,7 @@ Snake::Snake(sf::Color color, int startX, int startY)
 void Snake::move()
 {
     sf::Vector2f headPosition = body.front().getPosition();
-    sf::Vector2f newPosition = headPosition + direction * 20.0f;
+    sf::Vector2f newPosition = headPosition + direction * 5.0f;
 
     if (newPosition.x < 0 || newPosition.x >= 800 || newPosition.y < 0 || newPosition.y >= 600) {
         // Game over, hit the wall
@@ -133,6 +140,7 @@ void Snake::move()
 
     body.front().setPosition(newPosition);
 }
+//correct
 void Snake::grow()
 {
     sf::RectangleShape segment(sf::Vector2f(20, 20));
@@ -175,7 +183,7 @@ int Snake::getLength() const
 
 Food::Food(sf::Color color) : color(color)
 {
-    shape.setSize(sf::Vector2f(20, 20));
+    shape.setSize(sf::Vector2f(10, 10));
     shape.setFillColor(color);
 }
 
@@ -197,7 +205,10 @@ const sf::Vector2f& Food::getPosition() const {
 }
 
 Game::Game() : window(sf::VideoMode(800, 600), "SFML Snake Game"), player1(sf::Color::Green, 100, 100),
-player2(sf::Color::Red, 700, 500), turnCounter(0), respawnCounter(0) {
+player2(sf::Color::Red, 700, 200), turnCounter(0), respawnCounter(0) {
+    window.setFramerateLimit(60);
+   if(!Tex_bg.loadFromFile("bg.png"))cout<<"Bg not loaded;";
+    bg.setTexture(Tex_bg);
     srand(static_cast<unsigned>(time(nullptr)));
 
     for (int i = 0; i < 6; ++i)
@@ -218,24 +229,28 @@ void Game::handleInput() {
 
     // Player 1 controls
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-    {
+    {   
+        player1.setDirection(0, -1);
         player1.move();
 
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
+        player1.setDirection(0, 1);
         player1.move();
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
+        player1.setDirection(-1, 0);
         player1.move();
 
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
+        player1.setDirection(1, 0);
         player1.move();
 
     }
@@ -243,21 +258,25 @@ void Game::handleInput() {
     // Player 2 controls
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
+        player2.setDirection(0, -1);
         player2.move();
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
+        player2.setDirection(0, 1);
         player2.move();
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
+        player2.setDirection(-1, 0);
         player2.move();
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
+        player2.setDirection(1, 0);
         player2.move();
 
     }
@@ -268,11 +287,12 @@ void Game::update() {
     player2.move();
 
     // Check for collisions
-    if (player1.checkCollision(player2) || player1.getLength() == 0 || player2.getLength() == 0) {
-        //  std::cout << "Game Over! Player 1 score: " << player1.getLength() - 1 << ", Player 2 score: "
-          //          << player2.getLength() - 1 << std::endl;
-        reset();
-    }
+    //if (player1.checkCollision(player2) || player1.getLength() == 0 || player2.getLength() == 0) {
+    //    //  std::cout << "Game Over! Player 1 score: " << player1.getLength() - 1 << ", Player 2 score: "
+    //      //          << player2.getLength() - 1 << std::endl;
+    //    system("pause");
+    //    reset();
+    //}
 
     // Check for collision with food and handle respawn
     for (auto& food : foods) {
@@ -303,7 +323,7 @@ void Game::update() {
 
 void Game::render() {
     window.clear();
-
+    window.draw(bg);
     // Render snakes
     player1.render(window);
     player2.render(window);
@@ -337,8 +357,9 @@ void Game::run() {
         handleInput();
         update();
         render();
+        
 
-        sf::sleep(sf::seconds(0.5));  // Adjust the sleep time for controlling snake speed
+        sf::sleep(sf::seconds(0.1));  // Adjust the sleep time for controlling snake speed
     }
 }
 
