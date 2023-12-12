@@ -33,6 +33,7 @@ public:
     void setDirection(int, int);
     const std::vector<sf::RectangleShape>& getBody() const;
     int getLength() const;
+    Vector2f getDirection() const;
 
 };
 
@@ -77,6 +78,10 @@ public:
 };
 bool Snake::isKeyPressed() const {
     return keyPressed;
+}
+Vector2f Snake::getDirection() const
+{
+    return direction;
 }
 
 // Function to set the key pressed state
@@ -126,24 +131,25 @@ void Snake::move()
     }
 
     // Check for collision with itself
-    for (size_t i = 1; i < length; ++i) {
-        if (body[i].getGlobalBounds().contains(newPosition)) {
+    
+    for (int i = 1; i < length; ++i) {
+        if (body[i].getPosition() == newPosition) {
             // Game over, hit itself
             length = 0;
             return;
         }
     }
-
-    for (size_t i = length - 1; i > 0; --i) {
+    
+    for (int i = length - 1; i > 0; --i) {
         body[i].setPosition(body[i - 1].getPosition());
     }
-
     body.front().setPosition(newPosition);
 }
 //correct
 void Snake::grow()
 {
     sf::RectangleShape segment(sf::Vector2f(20, 20));
+    segment.setPosition(-100, -100);
     segment.setFillColor(color);
     body.push_back(segment);
     length++;
@@ -230,54 +236,84 @@ void Game::handleInput() {
     // Player 1 controls
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
     {   
-        player1.setDirection(0, -1);
-        player1.move();
+        if (player1.getDirection() != Vector2f(0, 1))
+        {
+            player1.setDirection(0, -1);
+            player1.move();
+        }
 
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
     {
-        player1.setDirection(0, 1);
-        player1.move();
+        if (player1.getDirection() != Vector2f(0, -1))
+        {
+            player1.setDirection(0, 1);
+            player1.move();
+        }
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
     {
-        player1.setDirection(-1, 0);
-        player1.move();
+        if (player1.getDirection() != Vector2f(1, 0))
+        {
 
+            player1.setDirection(-1, 0);
+            player1.move();
+
+        }
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
     {
-        player1.setDirection(1, 0);
-        player1.move();
+        if (player1.getDirection() != Vector2f(-1, 0))
+        {
 
+            player1.setDirection(1, 0);
+            player1.move();
+
+        }
     }
 
     // Player 2 controls
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
     {
-        player2.setDirection(0, -1);
-        player2.move();
+        if (player2.getDirection() != Vector2f(0, 1))
+        {
+            player2.setDirection(0, -1);
+            player2.move();
+        }
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
     {
-        player2.setDirection(0, 1);
-        player2.move();
+        if (player2.getDirection() != Vector2f(0, -1))
+        {
+            player2.setDirection(0, 1);
+            player2.move();
+        }
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
     {
-        player2.setDirection(-1, 0);
-        player2.move();
+        if (player2.getDirection() != Vector2f(1, 0))
+        {
+
+            player2.setDirection(-1, 0);
+            player2.move();
+
+        }
 
     }
     else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
     {
-        player2.setDirection(1, 0);
-        player2.move();
+        if (player2.getDirection() != Vector2f(-1, 0))
+        {
+
+            player2.setDirection(1, 0);
+            player2.move();
+
+        }
 
     }
 }
