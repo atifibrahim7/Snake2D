@@ -178,8 +178,9 @@ void Snake::render(sf::RenderWindow& window)
 
 bool Snake::checkCollision(const Snake& other) const
 {
-    for (const auto& segment : other.body) {
-        if (body.front().getGlobalBounds().intersects(segment.getGlobalBounds())) {
+    vector<sf::RectangleShape> otherBody = other.getBody();
+    for (int i = 0; i < otherBody.size();i++) {
+        if (body.front().getGlobalBounds().intersects(otherBody[i].getGlobalBounds())) {
             return true;
         }
     }
@@ -427,14 +428,15 @@ int Game::update() {
 		}
 
     }
-    // Check for collisions
-    //if (player1.checkCollision(player2) || player1.getLength() == 0 || player2.getLength() == 0) {
-    //    //  std::cout << "Game Over! Player 1 score: " << player1.getLength() - 1 << ", Player 2 score: "
-    //      //          << player2.getLength() - 1 << std::endl;
-    //    system("pause");
-    //    reset();
-    //}
-
+    //PLAYER COLLISION CHECK
+    if (players.size() == 2)
+    {
+        if (players[0].checkCollision(players[1]) || players[1].checkCollision(players[0]))
+        {
+            cout << "TESTING GAME OVER" << endl;
+            return 0;       // 0 for end screen
+        }
+    }
     // Check for collision with food and handle respawn
     for (auto& food : foods) {
         for (int i = 0; i < players.size(); i++)

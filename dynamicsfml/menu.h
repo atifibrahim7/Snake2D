@@ -154,7 +154,17 @@ public:
 
     int display_end()
     {
+
         RenderWindow window(VideoMode(800, 600), " Menu");
+
+
+        // Create a rectangle object for the overview
+        Vector2i posFloat;
+        RectangleShape rectangle(Vector2f(-100, -100));
+        Color green(0, 255, 0, 128);
+        rectangle.setFillColor(green);
+
+
         while (window.isOpen())
         {
             // Handle events
@@ -164,7 +174,19 @@ public:
                 if (event.type == Event::Closed)
                     window.close();
 
-
+                posFloat = Mouse::getPosition(window);
+                if (posFloat.x >= 288 && posFloat.x <= 484 && posFloat.y >= 350 && posFloat.y <= 435)
+                {
+					rectangle.setPosition(258, 350);
+					rectangle.setSize(Vector2f(290, 85));
+				}
+				else if (posFloat.x >= 344 && posFloat.x <= 430 && posFloat.y >= 470 && posFloat.y <= 530)
+				{
+					rectangle.setPosition(344, 470);
+					rectangle.setSize(Vector2f(86, 60));
+				}
+				else
+					rectangle.setPosition(-100, -100);
 
                 if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
                 {
@@ -190,6 +212,7 @@ public:
           
             window.clear();
             window.draw(end);
+            window.draw(rectangle);
             window.display();
 
             sf::sleep(sf::seconds(0.1));
